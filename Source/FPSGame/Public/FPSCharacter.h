@@ -33,6 +33,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
 	UCameraComponent* CameraComponent;
 
+	UPROPERTY(BlueprintReadOnly, BlueprintReadOnly, Category = "Gameplay")
+	bool bIsCarryingObjective;
+
 public:
 	AFPSCharacter();
 
