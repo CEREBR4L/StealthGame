@@ -33,9 +33,6 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
 	UCameraComponent* CameraComponent;
 
-	UPROPERTY(BlueprintReadOnly, BlueprintReadOnly, Category = "Gameplay")
-	bool bIsCarryingObjective;
-
 public:
 	AFPSCharacter();
 
@@ -50,6 +47,9 @@ public:
 	/** AnimMontage to play each time we fire */
 	UPROPERTY(EditDefaultsOnly, Category = "Gameplay")
 	UAnimSequence* FireAnimation;
+
+	UPROPERTY(BlueprintReadOnly, BlueprintReadOnly, Category = "Gameplay")
+	bool bIsCarryingObjective;
 
 protected:
 	
