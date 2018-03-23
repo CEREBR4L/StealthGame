@@ -15,6 +15,8 @@ AFPSAIGuard::AFPSAIGuard()
 
 	PawnSensingComp->OnSeePawn.AddDynamic(this, &AFPSAIGuard::OnPawnSeen);
 	PawnSensingComp->OnHearNoise.AddDynamic(this, &AFPSAIGuard::OnNoiseHeard);
+
+	GuardState = EAIState::Idle;
 }
 
 // Called when the game starts or when spawned
@@ -38,10 +40,14 @@ void AFPSAIGuard::OnPawnSeen(APawn * SeenPawn)
 	if (GM) {
 		GM->CompleteMission(SeenPawn, false);
 	}
+
+	SetGuardState(EAIState::Alerted);
 }
 
 void AFPSAIGuard::OnNoiseHeard(APawn * NoiseInstigator, const FVector& Location, float Volume)
 {
+	if (GuardState == EAIState::Alerted) return;
+
 	FVector Direction = Location - GetActorLocation();
 	Direction.Normalize();
 
@@ -53,11 +59,28 @@ void AFPSAIGuard::OnNoiseHeard(APawn * NoiseInstigator, const FVector& Location,
 	
 	GetWorldTimerManager().ClearTimer(TimerHandle_ResetOrientation);
 	GetWorldTimerManager().SetTimer(TimerHandle_ResetOrientation, this, &AFPSAIGuard::ResetOrientation, 3.0f);
+
+	SetGuardState(EAIState::Suspicious);
 }
 
 void AFPSAIGuard::ResetOrientation()
 {
 	SetActorRotation(OriginalRotation);
+
+	if (GuardState != EAIState::Alerted) {
+		SetGuardState(EAIState::Idle);
+	}
+}
+
+void AFPSAIGuard::SetGuardState(EAIState newState)
+{
+	if (GuardState == newState) {
+		return;
+	}
+
+	GuardState = newState;
+
+	OnStateChanged(GuardState);
 }
 
 // Called every frame
