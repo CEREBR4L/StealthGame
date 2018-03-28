@@ -18,6 +18,7 @@ AFPSAIGuard::AFPSAIGuard()
 	PawnSensingComp->OnHearNoise.AddDynamic(this, &AFPSAIGuard::OnNoiseHeard);
 
 	GuardState = EAIState::Idle;
+
 }
 
 // Called when the game starts or when spawned
@@ -90,6 +91,11 @@ void AFPSAIGuard::ResetOrientation()
 	}
 }
 
+void AFPSAIGuard::OnRep_GuardState()
+{
+	OnStateChanged(GuardState);
+}
+
 void AFPSAIGuard::SetGuardState(EAIState newState)
 {
 	if (GuardState == newState) {
@@ -98,7 +104,7 @@ void AFPSAIGuard::SetGuardState(EAIState newState)
 
 	GuardState = newState;
 
-	OnStateChanged(GuardState);
+	OnRep_GuardState();
 }
 
 void AFPSAIGuard::MoveToNextPatrolPoint()
@@ -127,4 +133,11 @@ void AFPSAIGuard::Tick(float DeltaTime)
 		}
 	}
 
+}
+
+void AFPSAIGuard::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AFPSAIGuard, GuardState);
 }
